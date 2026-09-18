@@ -311,31 +311,54 @@ app.get("/api/sync", auth, async (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
+  const identifier = String(req.body.email || req.body.username || "").trim();
+  const password = String(req.body.password || "").trim();
+
+  if (!identifier || !password) {
+    return res.status(400).json({ error: 'Email/Username dan Password wajib diisi.' });
+  }
+
   try {
-    // Query SQL yang sudah dipastikan valid untuk PostgreSQL
+    // Cari berdasarkan Email ATAU Username
     const result = await pool.query(
-      'SELECT * FROM users WHERE LOWER(email) = LOWER($1)',
-      [email]
+      `SELECT id, username, email, password, password_hash, name, nama, role 
+       FROM users 
+       WHERE LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($1)`,
+      [identifier]
     );
     const user = result.rows[0];
 
     if (!user) {
+      console.log(`[LOGIN FAILED] User tidak ditemukan: ${identifier}`);
       return res.status(400).json({ error: 'Email atau password salah.' });
     }
 
-    // Mendukung baik kolom 'password' maupun 'password_hash'
-    const storedPassword = user.password || user.password_hash;
-    const isMatch = bcrypt.compareSync(password, storedPassword);
+    const storedPassword = user.password_hash || user.password || "";
+    
+    // Cek dengan Bcrypt ATAU cocokkan langsung teks biasa (plain text)
+    let isMatch = false;
+    if (storedPassword.startsWith('$2')) {
+      isMatch = bcrypt.compareSync(password, storedPassword);
+    } else {
+      isMatch = (password === storedPassword);
+    }
 
     if (!isMatch) {
+      console.log(`[LOGIN FAILED] Password tidak cocok untuk user: ${identifier}`);
       return res.status(400).json({ error: 'Email atau password salah.' });
     }
 
+    // Buat token jika fungsi signToken tersedia
+    const token = typeof signToken === 'function' 
+      ? signToken({ sub: user.id, username: user.username, role: user.role, exp: Math.floor(Date.now() / 1000) + 43200 })
+      : null;
+
     res.json({
+      token,
       user: {
         id: user.id,
-        name: user.nama,
+        name: user.name || user.nama,
+        email: user.email,
         role: user.role
       }
     });
