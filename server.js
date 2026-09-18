@@ -231,7 +231,7 @@ app.post('/api/login', async (req, res) => {
   try {
     // Menyebutkan nama kolom langsung untuk menghindari kesalahan sintaks '*'
     const result = await pool.query(
-      'SELECT id, nama, email, password, role FROM users WHERE LOWER(email) = LOWER($1)',
+      'SELECT id, name, email, password, role FROM users WHERE LOWER(email) = LOWER($1)',
       [email]
     );
     const user = result.rows[0];
