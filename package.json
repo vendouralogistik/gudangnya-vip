@@ -1,0 +1,20 @@
+{
+  "name": "gudang-vip",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplikasi Gudang VIP PT. VENDOURA INTI PERKASA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "exceljs": "^4.4.0"
+  }
+}

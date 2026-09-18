@@ -1,0 +1,55 @@
+{
+  "admin": {
+    "username": "admin",
+    "password": "admin123",
+    "name": "Administrator Gudang VIP",
+    "role": "admin"
+  },
+  "items": [
+    {
+      "code": "SP-001",
+      "name": "Oli Mesin 15W-40",
+      "category": "Pelumas",
+      "unit": "Botol",
+      "min_stock": 10,
+      "initial_stock": 25,
+      "location": "Rak A-01"
+    },
+    {
+      "code": "SP-002",
+      "name": "Filter Oli",
+      "category": "Filter",
+      "unit": "Pcs",
+      "min_stock": 8,
+      "initial_stock": 20,
+      "location": "Rak A-02"
+    },
+    {
+      "code": "SP-003",
+      "name": "Filter Udara",
+      "category": "Filter",
+      "unit": "Pcs",
+      "min_stock": 5,
+      "initial_stock": 12,
+      "location": "Rak A-03"
+    },
+    {
+      "code": "SP-004",
+      "name": "Busi NGK",
+      "category": "Engine",
+      "unit": "Pcs",
+      "min_stock": 10,
+      "initial_stock": 30,
+      "location": "Rak B-01"
+    },
+    {
+      "code": "SP-005",
+      "name": "V-Belt",
+      "category": "Drive",
+      "unit": "Pcs",
+      "min_stock": 6,
+      "initial_stock": 15,
+      "location": "Rak B-02"
+    }
+  ]
+}

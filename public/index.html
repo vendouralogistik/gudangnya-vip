@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Gudang VIP — PT. VENDOURA INTI PERKASA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background: #f8fafc; }
+    .glass { background: rgba(255,255,255,.88); backdrop-filter: blur(10px); }
+    .nav-active { background: #e2e8f0; color: #0f172a; }
+    .toast-enter { animation: toastIn .22s ease-out; }
+    @keyframes toastIn { from { transform: translateY(8px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800">
+  <div id="toast-root" class="fixed right-4 top-4 z-[100] space-y-2 w-[min(92vw,380px)]"></div>
+
+  <section id="login-view" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
+    <div class="w-full max-w-md">
+      <div class="text-center text-white mb-8">
+        <div class="mx-auto mb-4 h-16 w-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
+          <i data-lucide="warehouse" class="h-9 w-9"></i>
+        </div>
+        <h1 class="text-3xl font-bold tracking-tight">Gudang VIP</h1>
+        <p class="text-slate-300 mt-2">PT. VENDOURA INTI PERKASA</p>
+      </div>
+      <form id="login-form" class="glass rounded-3xl p-6 shadow-2xl border border-white/20">
+        <div class="mb-5">
+          <label class="block text-sm font-medium mb-2">Username</label>
+          <input id="login-username" required autocomplete="username"
+            class="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-slate-400"
+            placeholder="Masukkan username" />
+        </div>
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Password</label>
+          <div class="relative">
+            <input id="login-password" required type="password" autocomplete="current-password"
+              class="w-full rounded-xl border border-slate-200 px-4 py-3 pr-12 outline-none focus:ring-2 focus:ring-slate-400"
+              placeholder="Masukkan password" />
+            <button type="button" id="toggle-password" class="absolute right-3 top-3 text-slate-400 hover:text-slate-700">
+              <i data-lucide="eye" class="h-5 w-5"></i>
+            </button>
+          </div>
+        </div>
+        <button id="login-button" class="w-full rounded-xl bg-slate-900 text-white py-3 font-semibold hover:bg-slate-700 disabled:opacity-50">
+          Masuk ke Gudang
+        </button>
+        <p class="text-xs text-slate-500 text-center mt-4">Data tersimpan di PostgreSQL Supabase dan disinkronkan otomatis.</p>
+      </form>
+    </div>
+  </section>
+
+  <div id="app-view" class="hidden min-h-screen">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 bg-slate-950 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-200">
+      <div class="h-full flex flex-col">
+        <div class="p-5 border-b border-white/10">
+          <div class="flex items-center gap-3">
+            <div class="h-11 w-11 rounded-xl bg-white/10 flex items-center justify-center">
+              <i data-lucide="warehouse" class="h-6 w-6"></i>
+            </div>
+            <div>
+              <div class="font-bold">Gudang VIP</div>
+              <div class="text-xs text-slate-400">VENDOURA INTI PERKASA</div>
+            </div>
+          </div>
+        </div>
+        <nav class="p-4 space-y-1 flex-1">
+          <button data-page="dashboard" class="nav-btn nav-active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium">
+            <i data-lucide="layout-dashboard" class="h-5 w-5"></i> Dashboard
+          </button>
+          <button data-page="items" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/10">
+            <i data-lucide="package-search" class="h-5 w-5"></i> Master Sparepart
+          </button>
+          <button data-page="stock-in" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/10">
+            <i data-lucide="package-plus" class="h-5 w-5"></i> Stok Masuk
+          </button>
+          <button data-page="stock-out" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/10">
+            <i data-lucide="package-minus" class="h-5 w-5"></i> Stok Keluar
+          </button>
+          <button data-page="reports" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/10">
+            <i data-lucide="file-spreadsheet" class="h-5 w-5"></i> Laporan Excel
+          </button>
+        </nav>
+        <div class="p-4 border-t border-white/10">
+          <div class="rounded-xl bg-white/5 p-3 mb-3">
+            <div class="text-xs text-slate-400">Login sebagai</div>
+            <div id="sidebar-user" class="font-semibold mt-1 truncate">-</div>
+          </div>
+          <button id="logout-button" class="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm hover:bg-white/10">
+            <i data-lucide="log-out" class="h-4 w-4"></i> Keluar
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div id="sidebar-overlay" class="hidden fixed inset-0 z-30 bg-black/50 lg:hidden"></div>
+
+    <main class="lg:ml-72 min-h-screen">
+      <header class="sticky top-0 z-20 glass border-b border-slate-200">
+        <div class="px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <button id="menu-button" class="lg:hidden h-10 w-10 rounded-xl border border-slate-200 flex items-center justify-center">
+              <i data-lucide="menu" class="h-5 w-5"></i>
+            </button>
+            <div>
+              <h2 id="page-title" class="font-bold text-lg">Dashboard</h2>
+              <div class="text-xs text-slate-500 flex items-center gap-2">
+                <span id="sync-status-dot" class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                <span id="sync-status">Sinkron aktif</span>
+                <span>•</span>
+                <span id="last-sync">Belum ada sinkronisasi</span>
+              </div>
+            </div>
+          </div>
+          <button id="manual-sync" class="h-10 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center gap-2 text-sm">
+            <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+            <span class="hidden sm:inline">Sync</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="p-4 sm:p-6 max-w-7xl mx-auto">
+        <section id="page-dashboard" class="page">
+          <div class="mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold">Dashboard Gudang</h1>
+            <p class="text-slate-500 mt-1">Ringkasan stok dan aktivitas gudang terbaru.</p>
+          </div>
+
+          <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-slate-500">Total Sparepart</div>
+                <i data-lucide="boxes" class="h-5 w-5 text-slate-400"></i>
+              </div>
+              <div id="stat-items" class="text-2xl sm:text-3xl font-bold mt-3">0</div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-slate-500">Total Unit</div>
+                <i data-lucide="layers-3" class="h-5 w-5 text-slate-400"></i>
+              </div>
+              <div id="stat-units" class="text-2xl sm:text-3xl font-bold mt-3">0</div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-slate-500">Stok Kritis</div>
+                <i data-lucide="triangle-alert" class="h-5 w-5 text-amber-500"></i>
+              </div>
+              <div id="stat-critical" class="text-2xl sm:text-3xl font-bold mt-3 text-amber-600">0</div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-slate-500">Keluar 30 Hari</div>
+                <i data-lucide="trending-down" class="h-5 w-5 text-slate-400"></i>
+              </div>
+              <div id="stat-out" class="text-2xl sm:text-3xl font-bold mt-3">0</div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden mb-6">
+            <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold">Stok Kritis</h3>
+                <p class="text-sm text-slate-500">Item dengan stok ≤ batas minimum.</p>
+              </div>
+              <button data-page="items" class="text-sm font-semibold text-slate-700 hover:underline">Lihat master</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-slate-500">
+                  <tr>
+                    <th class="text-left px-4 py-3">Kode</th>
+                    <th class="text-left px-4 py-3">Sparepart</th>
+                    <th class="text-right px-4 py-3">Stok</th>
+                    <th class="text-right px-4 py-3">Min.</th>
+                    <th class="text-left px-4 py-3">Lokasi</th>
+                  </tr>
+                </thead>
+                <tbody id="critical-table"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-100">
+              <h3 class="font-bold">Transaksi Terbaru</h3>
+              <p class="text-sm text-slate-500">Aktivitas stok yang baru dicatat.</p>
+            </div>
+            <div id="recent-transactions" class="divide-y divide-slate-100"></div>
+          </div>
+        </section>
+
+        <section id="page-items" class="page hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 class="text-2xl sm:text-3xl font-bold">Master Sparepart</h1>
+              <p class="text-slate-500 mt-1">Kelola data barang, batas minimum, dan lokasi penyimpanan.</p>
+            </div>
+            <button id="add-item-button" class="rounded-xl bg-slate-900 text-white px-4 py-3 font-semibold flex items-center justify-center gap-2 hover:bg-slate-700">
+              <i data-lucide="plus" class="h-5 w-5"></i> Tambah Sparepart
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100">
+              <div class="relative max-w-xl">
+                <i data-lucide="search" class="absolute left-3 top-3 h-5 w-5 text-slate-400"></i>
+                <input id="item-search" class="w-full rounded-xl border border-slate-200 pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-slate-300" placeholder="Cari kode, nama, kategori, atau lokasi..." />
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm min-w-[850px]">
+                <thead class="bg-slate-50 text-slate-500">
+                  <tr>
+                    <th class="text-left px-4 py-3">Kode</th>
+                    <th class="text-left px-4 py-3">Nama</th>
+                    <th class="text-left px-4 py-3">Kategori</th>
+                    <th class="text-left px-4 py-3">Unit</th>
+                    <th class="text-right px-4 py-3">Stok</th>
+                    <th class="text-right px-4 py-3">Min.</th>
+                    <th class="text-left px-4 py-3">Lokasi</th>
+                    <th class="text-right px-4 py-3">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="items-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="page-stock-in" class="page hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold">Stok Masuk</h1>
+            <p class="text-slate-500 mt-1">Catat penerimaan barang ke gudang.</p>
+          </div>
+          <div class="max-w-2xl bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+            <form id="stock-in-form" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Sparepart</label>
+                <select id="in-item" required class="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white"></select>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2">Jumlah</label>
+                  <input id="in-qty" required min="0.01" step="0.01" type="number" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">No. Referensi</label>
+                  <input id="in-ref" class="w-full rounded-xl border border-slate-200 px-4 py-3" placeholder="PO / surat jalan" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Catatan</label>
+                <textarea id="in-notes" rows="3" class="w-full rounded-xl border border-slate-200 px-4 py-3" placeholder="Keterangan tambahan"></textarea>
+              </div>
+              <button class="rounded-xl bg-emerald-600 text-white px-5 py-3 font-semibold hover:bg-emerald-700">Simpan Stok Masuk</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="page-stock-out" class="page hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold">Stok Keluar</h1>
+            <p class="text-slate-500 mt-1">Catat pengeluaran barang. Sistem akan memvalidasi stok di server.</p>
+          </div>
+          <div class="max-w-2xl bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+            <form id="stock-out-form" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Sparepart</label>
+                <select id="out-item" required class="w-full rounded-xl border border-slate-200 px-4 py-3 bg-white"></select>
+              </div>
+              <div id="out-stock-info" class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-600">Pilih sparepart untuk melihat stok tersedia.</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2">Jumlah</label>
+                  <input id="out-qty" required min="0.01" step="0.01" type="number" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">No. Referensi</label>
+                  <input id="out-ref" class="w-full rounded-xl border border-slate-200 px-4 py-3" placeholder="WO / dokumen" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Tujuan</label>
+                <input id="out-destination" class="w-full rounded-xl border border-slate-200 px-4 py-3" placeholder="Unit / kendaraan / departemen" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Catatan</label>
+                <textarea id="out-notes" rows="3" class="w-full rounded-xl border border-slate-200 px-4 py-3" placeholder="Keterangan tambahan"></textarea>
+              </div>
+              <button class="rounded-xl bg-rose-600 text-white px-5 py-3 font-semibold hover:bg-rose-700">Simpan Stok Keluar</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="page-reports" class="page hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold">Laporan Excel</h1>
+            <p class="text-slate-500 mt-1">Buat laporan gudang yang sudah dirapikan otomatis dan langsung unduh dalam format Excel.</p>
+          </div>
+
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-6">
+            <div class="bg-white rounded-2xl border border-slate-200 p-5">
+              <div class="flex items-center gap-3">
+                <div class="h-11 w-11 rounded-xl bg-slate-100 flex items-center justify-center">
+                  <i data-lucide="package" class="h-5 w-5"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-500">Jenis Sparepart</div>
+                  <div id="report-item-count" class="text-xl font-bold">0</div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-5">
+              <div class="flex items-center gap-3">
+                <div class="h-11 w-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <i data-lucide="arrow-down-to-line" class="h-5 w-5"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-500">Stok Masuk 30 Hari</div>
+                  <div id="report-in-count" class="text-xl font-bold">0</div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-white rounded-2xl border border-slate-200 p-5">
+              <div class="flex items-center gap-3">
+                <div class="h-11 w-11 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                  <i data-lucide="arrow-up-from-line" class="h-5 w-5"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-slate-500">Stok Keluar 30 Hari</div>
+                  <div id="report-out-count" class="text-xl font-bold">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="max-w-3xl bg-white rounded-2xl border border-slate-200 p-5 sm:p-6">
+            <div class="flex items-start gap-3 mb-5">
+              <div class="h-11 w-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <i data-lucide="file-spreadsheet" class="h-5 w-5"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg">Export Laporan Gudang</h3>
+                <p class="text-sm text-slate-500 mt-1">Excel akan berisi ringkasan, posisi stok, stok masuk, stok keluar, dan rekap per sparepart.</p>
+              </div>
+            </div>
+
+            <form id="report-form" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium mb-2">Tanggal Mulai</label>
+                  <input id="report-from" required type="date" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2">Tanggal Akhir</label>
+                  <input id="report-to" required type="date" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+                </div>
+              </div>
+              <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-600">
+                <div class="font-semibold text-slate-800 mb-1">Isi laporan</div>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>Ringkasan statistik periode.</li>
+                  <li>Posisi stok seluruh sparepart.</li>
+                  <li>Detail seluruh transaksi stok masuk.</li>
+                  <li>Detail seluruh transaksi stok keluar.</li>
+                  <li>Rekap per sparepart dengan stok awal estimasi, masuk, keluar, stok akhir, dan status.</li>
+                </ul>
+              </div>
+              <button id="download-report-button" class="rounded-xl bg-emerald-600 text-white px-5 py-3 font-semibold hover:bg-emerald-700 flex items-center gap-2">
+                <i data-lucide="download" class="h-5 w-5"></i> Buat & Download Excel
+              </button>
+            </form>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="item-modal" class="hidden fixed inset-0 z-50 bg-black/50 p-4 items-center justify-center">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 id="modal-title" class="font-bold text-lg">Tambah Sparepart</h3>
+          <p class="text-sm text-slate-500">Data master akan tersimpan di Supabase.</p>
+        </div>
+        <button id="close-modal" class="h-9 w-9 rounded-xl hover:bg-slate-100 flex items-center justify-center"><i data-lucide="x"></i></button>
+      </div>
+      <form id="item-form" class="p-5 space-y-4">
+        <input id="edit-item-id" type="hidden" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Kode *</label>
+            <input id="item-code" required class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Nama *</label>
+            <input id="item-name" required class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Kategori</label>
+            <input id="item-category" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Unit</label>
+            <input id="item-unit" value="Pcs" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Batas Minimum *</label>
+            <input id="item-min" required min="0" step="0.01" type="number" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+          </div>
+          <div id="initial-stock-wrap">
+            <label class="block text-sm font-medium mb-2">Stok Awal</label>
+            <input id="item-initial" min="0" step="0.01" type="number" value="0" class="w-full rounded-xl border border-slate-200 px-4 py-3" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Lokasi</label>
+          <input id="item-location" class="w-full rounded-xl border border-slate-200 px-4 py-3" placeholder="Rak A-01" />
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" id="cancel-modal" class="rounded-xl border border-slate-200 px-5 py-3 font-semibold">Batal</button>
+          <button class="rounded-xl bg-slate-900 text-white px-5 py-3 font-semibold">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      token: localStorage.getItem("gudang_vip_token") || "",
+      user: JSON.parse(localStorage.getItem("gudang_vip_user") || "null"),
+      items: [],
+      stockIn: [],
+      stockOut: [],
+      stats: {},
+      page: "dashboard",
+      syncing: false,
+      timer: null
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatNumber(value) {
+      return new Intl.NumberFormat("id-ID", { maximumFractionDigits: 2 }).format(Number(value || 0));
+    }
+
+    function formatDate(value) {
+      if (!value) return "-";
+      return new Intl.DateTimeFormat("id-ID", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      }).format(new Date(value));
+    }
+
+    function toast(message, type = "info") {
+      const root = $("#toast-root");
+      const el = document.createElement("div");
+      const icon = type === "success" ? "circle-check" : type === "error" ? "circle-alert" : "info";
+      const bg = type === "success" ? "bg-emerald-600" : type === "error" ? "bg-rose-600" : "bg-slate-900";
+      el.className = `${bg} text-white rounded-xl shadow-lg px-4 py-3 flex items-start gap-3 toast-enter`;
+      el.innerHTML = `<i data-lucide="${icon}" class="h-5 w-5 shrink-0 mt-0.5"></i><div class="text-sm leading-5">${escapeHtml(message)}</div>`;
+      root.appendChild(el);
+      lucide.createIcons();
+      setTimeout(() => el.remove(), 4500);
+    }
+
+    async function api(path, options = {}) {
+      const headers = { ...(options.headers || {}) };
+      if (state.token) headers.Authorization = `Bearer ${state.token}`;
+      if (options.body && typeof options.body !== "string") {
+        headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(options.body);
+      }
+      const response = await fetch(path, { ...options, headers });
+      let data = {};
+      try { data = await response.json(); } catch {}
+      if (response.status === 401) {
+        logout(false);
+        throw new Error(data.error || "Sesi berakhir.");
+      }
+      if (!response.ok) throw new Error(data.error || "Permintaan gagal.");
+      return data;
+    }
+
+    async function login(event) {
+      event.preventDefault();
+      const button = $("#login-button");
+      button.disabled = true;
+      button.textContent = "Memproses...";
+      try {
+        const data = await api("/api/login", {
+          method: "POST",
+          body: {
+            username: $("#login-username").value.trim(),
+            password: $("#login-password").value
+          }
+        });
+        state.token = data.token;
+        state.user = data.user;
+        localStorage.setItem("gudang_vip_token", state.token);
+        localStorage.setItem("gudang_vip_user", JSON.stringify(state.user));
+        showApp();
+        await syncData(true);
+        toast("Login berhasil.", "success");
+      } catch (error) {
+        toast(error.message, "error");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Masuk ke Gudang";
+      }
+    }
+
+    function logout(showMessage = true) {
+      state.token = "";
+      state.user = null;
+      localStorage.removeItem("gudang_vip_token");
+      localStorage.removeItem("gudang_vip_user");
+      clearInterval(state.timer);
+      $("#app-view").classList.add("hidden");
+      $("#login-view").classList.remove("hidden");
+      if (showMessage) toast("Anda telah keluar.", "success");
+    }
+
+    function showApp() {
+      $("#login-view").classList.add("hidden");
+      $("#app-view").classList.remove("hidden");
+      $("#sidebar-user").textContent = `${state.user?.name || state.user?.username || "-"} (${state.user?.role || "staff"})`;
+      $("#add-item-button").classList.toggle("hidden", state.user?.role !== "admin");
+      lucide.createIcons();
+    }
+
+    async function syncData(silent = false) {
+      if (!state.token || state.syncing) return;
+      state.syncing = true;
+      $("#sync-status-dot").className = "h-2 w-2 rounded-full bg-amber-500 animate-pulse";
+      $("#sync-status").textContent = "Menyinkronkan...";
+      try {
+        const data = await api("/api/sync");
+        state.items = data.items || [];
+        state.stockIn = data.stock_in || [];
+        state.stockOut = data.stock_out || [];
+        state.stats = data.stats || {};
+        renderAll();
+        $("#last-sync").textContent = new Date(data.server_time || Date.now()).toLocaleTimeString("id-ID");
+        $("#sync-status-dot").className = "h-2 w-2 rounded-full bg-emerald-500";
+        $("#sync-status").textContent = "Sinkron aktif";
+      } catch (error) {
+        $("#sync-status-dot").className = "h-2 w-2 rounded-full bg-rose-500";
+        $("#sync-status").textContent = "Sync gagal";
+        if (!silent) toast(error.message, "error");
+      } finally {
+        state.syncing = false;
+      }
+    }
+
+    function renderAll() {
+      renderStats();
+      renderCritical();
+      renderItems();
+      renderTransactions();
+      renderReportStats();
+      populateItemSelects();
+      updateOutStockInfo();
+      lucide.createIcons();
+    }
+
+    function renderStats() {
+      $("#stat-items").textContent = formatNumber(state.stats.total_items);
+      $("#stat-units").textContent = formatNumber(state.stats.total_units);
+      $("#stat-critical").textContent = formatNumber(state.stats.critical_items);
+      $("#stat-out").textContent = formatNumber(state.stats.outbound_30d);
+    }
+
+    function criticalItems() {
+      return state.items.filter(item => Number(item.current_stock) <= Number(item.min_stock));
+    }
+
+    function renderCritical() {
+      const rows = criticalItems();
+      $("#critical-table").innerHTML = rows.length
+        ? rows.map(item => `
+          <tr class="border-t border-slate-100">
+            <td class="px-4 py-3 font-mono text-xs">${escapeHtml(item.code)}</td>
+            <td class="px-4 py-3 font-medium">${escapeHtml(item.name)}</td>
+            <td class="px-4 py-3 text-right font-semibold text-amber-600">${formatNumber(item.current_stock)} ${escapeHtml(item.unit)}</td>
+            <td class="px-4 py-3 text-right">${formatNumber(item.min_stock)}</td>
+            <td class="px-4 py-3">${escapeHtml(item.location || "-")}</td>
+          </tr>`).join("")
+        : `<tr><td colspan="5" class="px-4 py-10 text-center text-slate-500">Tidak ada stok kritis.</td></tr>`;
+    }
+
+    function renderItems() {
+      const q = ($("#item-search")?.value || "").toLowerCase().trim();
+      const filtered = state.items.filter(item =>
+        [item.code, item.name, item.category, item.location].some(v => String(v || "").toLowerCase().includes(q))
+      );
+
+      $("#items-table").innerHTML = filtered.length
+        ? filtered.map(item => {
+            const critical = Number(item.current_stock) <= Number(item.min_stock);
+            return `<tr class="border-t border-slate-100 hover:bg-slate-50">
+              <td class="px-4 py-3 font-mono text-xs">${escapeHtml(item.code)}</td>
+              <td class="px-4 py-3 font-semibold">${escapeHtml(item.name)}</td>
+              <td class="px-4 py-3">${escapeHtml(item.category || "-")}</td>
+              <td class="px-4 py-3">${escapeHtml(item.unit)}</td>
+              <td class="px-4 py-3 text-right font-semibold ${critical ? "text-amber-600" : ""}">${formatNumber(item.current_stock)}</td>
+              <td class="px-4 py-3 text-right">${formatNumber(item.min_stock)}</td>
+              <td class="px-4 py-3">${escapeHtml(item.location || "-")}</td>
+              <td class="px-4 py-3 text-right">
+                ${state.user?.role === "admin" ? `
+                <div class="flex justify-end gap-1">
+                  <button data-edit-item="${item.id}" class="h-9 w-9 rounded-lg hover:bg-slate-200 inline-flex items-center justify-center" title="Edit"><i data-lucide="pencil" class="h-4 w-4"></i></button>
+                  <button data-delete-item="${item.id}" class="h-9 w-9 rounded-lg hover:bg-rose-100 text-rose-600 inline-flex items-center justify-center" title="Hapus"><i data-lucide="trash-2" class="h-4 w-4"></i></button>
+                </div>` : `<span class="text-slate-400">-</span>`}
+              </td>
+            </tr>`;
+          }).join("")
+        : `<tr><td colspan="8" class="px-4 py-10 text-center text-slate-500">Data tidak ditemukan.</td></tr>`;
+
+      lucide.createIcons();
+    }
+
+    function renderTransactions() {
+      const transactions = [
+        ...state.stockIn.map(x => ({ ...x, type: "in" })),
+        ...state.stockOut.map(x => ({ ...x, type: "out" }))
+      ].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 8);
+
+      $("#recent-transactions").innerHTML = transactions.length
+        ? transactions.map(t => `
+          <div class="p-4 flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl ${t.type === "in" ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"} flex items-center justify-center shrink-0">
+              <i data-lucide="${t.type === "in" ? "arrow-down-to-line" : "arrow-up-from-line"}" class="h-5 w-5"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="font-semibold truncate">${escapeHtml(t.name)}</div>
+              <div class="text-xs text-slate-500">${escapeHtml(t.code)} • ${formatDate(t.created_at)}</div>
+            </div>
+            <div class="text-right">
+              <div class="font-bold ${t.type === "in" ? "text-emerald-600" : "text-rose-600"}">${t.type === "in" ? "+" : "-"}${formatNumber(t.quantity)} ${escapeHtml(t.unit)}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(t.created_by_name || "-")}</div>
+            </div>
+          </div>`).join("")
+        : `<div class="p-8 text-center text-slate-500">Belum ada transaksi.</div>`;
+
+      lucide.createIcons();
+    }
+
+    function populateItemSelects() {
+      const options = `<option value="">Pilih sparepart...</option>` + state.items.map(item =>
+        `<option value="${item.id}">${escapeHtml(item.code)} — ${escapeHtml(item.name)} (stok: ${formatNumber(item.current_stock)} ${escapeHtml(item.unit)})</option>`
+      ).join("");
+      $("#in-item").innerHTML = options;
+      $("#out-item").innerHTML = options;
+    }
+
+    function updateOutStockInfo() {
+      const item = state.items.find(x => String(x.id) === String($("#out-item").value));
+      $("#out-stock-info").textContent = item
+        ? `Stok tersedia: ${formatNumber(item.current_stock)} ${item.unit} • Batas minimum: ${formatNumber(item.min_stock)} ${item.unit}`
+        : "Pilih sparepart untuk melihat stok tersedia.";
+    }
+
+    function renderReportStats() {
+      $("#report-item-count").textContent = formatNumber(state.items.length);
+      $("#report-in-count").textContent = formatNumber(state.stats.inbound_30d);
+      $("#report-out-count").textContent = formatNumber(state.stats.outbound_30d);
+    }
+
+    function setDefaultReportDates() {
+      const to = new Date();
+      const from = new Date();
+      from.setDate(to.getDate() - 29);
+      const iso = date => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      };
+      if (!$("#report-from").value) $("#report-from").value = iso(from);
+      if (!$("#report-to").value) $("#report-to").value = iso(to);
+    }
+
+    async function downloadReport(event) {
+      event.preventDefault();
+      const from = $("#report-from").value;
+      const to = $("#report-to").value;
+      if (!from || !to) {
+        toast("Tanggal laporan wajib diisi.", "error");
+        return;
+      }
+      if (from > to) {
+        toast("Tanggal mulai tidak boleh lebih besar dari tanggal akhir.", "error");
+        return;
+      }
+
+      const button = $("#download-report-button");
+      const original = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<i data-lucide="loader-circle" class="h-5 w-5 animate-spin"></i> Membuat Excel...';
+      lucide.createIcons();
+
+      try {
+        const response = await fetch(`/api/reports/excel?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`, {
+          headers: { Authorization: `Bearer ${state.token}` }
+        });
+
+        if (response.status === 401) {
+          logout(false);
+          throw new Error("Sesi berakhir. Silakan login kembali.");
+        }
+
+        if (!response.ok) {
+          let message = "Gagal membuat laporan Excel.";
+          try {
+            const data = await response.json();
+            message = data.error || message;
+          } catch {}
+          throw new Error(message);
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Laporan-Gudang-VIP-${from}-sd-${to}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        toast("Laporan Excel berhasil dibuat dan diunduh.", "success");
+      } catch (error) {
+        toast(error.message, "error");
+      } finally {
+        button.disabled = false;
+        button.innerHTML = original;
+        lucide.createIcons();
+      }
+    }
+
+    function navigate(page) {
+      state.page = page;
+      $$(".page").forEach(el => el.classList.add("hidden"));
+      $(`#page-${page}`).classList.remove("hidden");
+      $$(".nav-btn").forEach(btn => {
+        const active = btn.dataset.page === page;
+        btn.classList.toggle("nav-active", active);
+        btn.classList.toggle("text-slate-300", !active);
+      });
+      const titles = {
+        dashboard: "Dashboard",
+        items: "Master Sparepart",
+        "stock-in": "Stok Masuk",
+        "stock-out": "Stok Keluar",
+        reports: "Laporan Excel"
+      };
+      $("#page-title").textContent = titles[page] || "Gudang VIP";
+      closeSidebar();
+    }
+
+    function openModal(item = null) {
+      $("#item-modal").classList.remove("hidden");
+      $("#item-modal").classList.add("flex");
+      $("#modal-title").textContent = item ? "Edit Sparepart" : "Tambah Sparepart";
+      $("#edit-item-id").value = item?.id || "";
+      $("#item-code").value = item?.code || "";
+      $("#item-name").value = item?.name || "";
+      $("#item-category").value = item?.category || "";
+      $("#item-unit").value = item?.unit || "Pcs";
+      $("#item-min").value = item?.min_stock ?? 0;
+      $("#item-initial").value = item?.current_stock ?? 0;
+      $("#item-location").value = item?.location || "";
+      $("#initial-stock-wrap").classList.toggle("hidden", Boolean(item));
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      $("#item-modal").classList.add("hidden");
+      $("#item-modal").classList.remove("flex");
+      $("#item-form").reset();
+      $("#edit-item-id").value = "";
+    }
+
+    async function submitItem(event) {
+      event.preventDefault();
+      const id = $("#edit-item-id").value;
+      const body = {
+        code: $("#item-code").value.trim(),
+        name: $("#item-name").value.trim(),
+        category: $("#item-category").value.trim(),
+        unit: $("#item-unit").value.trim() || "Pcs",
+        min_stock: Number($("#item-min").value),
+        location: $("#item-location").value.trim()
+      };
+
+      if (!id) body.initial_stock = Number($("#item-initial").value || 0);
+
+      try {
+        await api(id ? `/api/items/${id}` : "/api/items", {
+          method: id ? "PUT" : "POST",
+          body
+        });
+        closeModal();
+        await syncData(true);
+        toast(id ? "Sparepart diperbarui." : "Sparepart ditambahkan.", "success");
+      } catch (error) {
+        toast(error.message, "error");
+      }
+    }
+
+    async function deleteItem(id) {
+      const item = state.items.find(x => String(x.id) === String(id));
+      if (!item) return;
+      if (!confirm(`Hapus sparepart "${item.name}"?`)) return;
+      try {
+        await api(`/api/items/${id}`, { method: "DELETE" });
+        await syncData(true);
+        toast("Sparepart dihapus.", "success");
+      } catch (error) {
+        toast(error.message, "error");
+      }
+    }
+
+    async function submitStockIn(event) {
+      event.preventDefault();
+      try {
+        await api("/api/stock-in", {
+          method: "POST",
+          body: {
+            item_id: Number($("#in-item").value),
+            quantity: Number($("#in-qty").value),
+            reference_no: $("#in-ref").value.trim(),
+            notes: $("#in-notes").value.trim()
+          }
+        });
+        $("#stock-in-form").reset();
+        await syncData(true);
+        toast("Stok masuk berhasil disimpan.", "success");
+      } catch (error) {
+        toast(error.message, "error");
+      }
+    }
+
+    async function submitStockOut(event) {
+      event.preventDefault();
+      try {
+        await api("/api/stock-out", {
+          method: "POST",
+          body: {
+            item_id: Number($("#out-item").value),
+            quantity: Number($("#out-qty").value),
+            reference_no: $("#out-ref").value.trim(),
+            destination: $("#out-destination").value.trim(),
+            notes: $("#out-notes").value.trim()
+          }
+        });
+        $("#stock-out-form").reset();
+        updateOutStockInfo();
+        await syncData(true);
+        toast("Stok keluar berhasil disimpan.", "success");
+      } catch (error) {
+        toast(error.message, "error");
+      }
+    }
+
+    function openSidebar() {
+      $("#sidebar").classList.remove("-translate-x-full");
+      $("#sidebar-overlay").classList.remove("hidden");
+    }
+
+    function closeSidebar() {
+      if (window.innerWidth < 1024) {
+        $("#sidebar").classList.add("-translate-x-full");
+        $("#sidebar-overlay").classList.add("hidden");
+      }
+    }
+
+    $("#login-form").addEventListener("submit", login);
+    $("#toggle-password").addEventListener("click", () => {
+      const input = $("#login-password");
+      input.type = input.type === "password" ? "text" : "password";
+    });
+    $("#logout-button").addEventListener("click", () => logout(true));
+    $("#manual-sync").addEventListener("click", () => syncData(false));
+    $("#item-search").addEventListener("input", renderItems);
+    $("#add-item-button").addEventListener("click", () => openModal());
+    $("#close-modal").addEventListener("click", closeModal);
+    $("#cancel-modal").addEventListener("click", closeModal);
+    $("#item-form").addEventListener("submit", submitItem);
+    $("#stock-in-form").addEventListener("submit", submitStockIn);
+    $("#stock-out-form").addEventListener("submit", submitStockOut);
+    $("#report-form").addEventListener("submit", downloadReport);
+    $("#out-item").addEventListener("change", updateOutStockInfo);
+    setDefaultReportDates();
+    $("#menu-button").addEventListener("click", openSidebar);
+    $("#sidebar-overlay").addEventListener("click", closeSidebar);
+
+    document.addEventListener("click", (event) => {
+      const nav = event.target.closest("[data-page]");
+      if (nav) navigate(nav.dataset.page);
+
+      const edit = event.target.closest("[data-edit-item]");
+      if (edit) {
+        const item = state.items.find(x => String(x.id) === String(edit.dataset.editItem));
+        if (item) openModal(item);
+      }
+
+      const del = event.target.closest("[data-delete-item]");
+      if (del) deleteItem(del.dataset.deleteItem);
+    });
+
+    window.addEventListener("focus", () => {
+      if (state.token) syncData(true);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && state.token) syncData(true);
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 1024) {
+        $("#sidebar").classList.remove("-translate-x-full");
+        $("#sidebar-overlay").classList.add("hidden");
+      }
+    });
+
+    lucide.createIcons();
+
+    if (state.token && state.user) {
+      showApp();
+      syncData(true);
+      navigate("dashboard");
+    }
+
+    state.timer = setInterval(() => {
+      if (state.token && !document.hidden) syncData(true);
+    }, 10000);
+  </script>
+</body>
+</html>
