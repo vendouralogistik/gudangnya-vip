@@ -326,39 +326,40 @@ app.get("/api/sync", auth, async (req, res) => {
   }
 });
 
-app.post("/api/items", auth, requireAdmin, async (req, res) => {
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const code = cleanString(req.body.code, 80);
-    const name = cleanString(req.body.name, 200);
-    const category = cleanString(req.body.category, 100);
-    const unit = cleanString(req.body.unit || "Pcs", 50);
-    const location = cleanString(req.body.location, 120);
-    const minStock = Number(req.body.min_stock);
-    const initialStock = Number(req.body.initial_stock || 0);
-
-    if (!code || !name || !Number.isFinite(minStock) || minStock < 0 ||
-        !Number.isFinite(initialStock) || initialStock < 0) {
-      return res.status(400).json({ error: "Data sparepart tidak valid." });
-    }
-
+    // Query SQL yang sudah dipastikan valid untuk PostgreSQL
     const result = await pool.query(
-      `INSERT INTO items
-       (code, name, category, unit, min_stock, current_stock, location)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING *`,
-      [code, name, category, unit, minStock, initialStock, location]
+      'SELECT * FROM users WHERE LOWER(email) = LOWER($1)',
+      [email]
     );
+    const user = result.rows[0];
 
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    if (error.code === "23505") {
-      return res.status(409).json({ error: "Kode sparepart sudah digunakan." });
+    if (!user) {
+      return res.status(400).json({ error: 'Email atau password salah.' });
     }
-    console.error("Create item error:", error);
-    res.status(500).json({ error: "Gagal menambah sparepart." });
+
+    // Mendukung baik kolom 'password' maupun 'password_hash'
+    const storedPassword = user.password || user.password_hash;
+    const isMatch = bcrypt.compareSync(password, storedPassword);
+
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Email atau password salah.' });
+    }
+
+    res.json({
+      user: {
+        id: user.id,
+        name: user.nama,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
-
 app.put("/api/items/:id", auth, requireAdmin, async (req, res) => {
   try {
     const id = Number(req.params.id);
