@@ -226,54 +226,38 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-app.post("/api/login", async (req, res) => {
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const username = cleanString(req.body.username, 100);
-    const password = String(req.body.password || "");
-
-    if (!username || !password) {
-      return res.status(400).json({ error: "Username dan password wajib diisi." });
-    }
-
+    // Menyebutkan nama kolom langsung untuk menghindari kesalahan sintaks '*'
     const result = await pool.query(
-      `SELECT id, username, password, name, role
-     SELECT * FROM users WHERE LOWER(email) = LOWER($1) LIMIT 1`,
-      [username]
+      'SELECT id, nama, email, password, role FROM users WHERE LOWER(email) = LOWER($1)',
+      [email]
     );
-
-    if (!result.rowCount) {
-      return res.status(401).json({ error: "Username atau password salah." });
-    }
-
     const user = result.rows[0];
-    const valid = await bcrypt.compare(password, user.password_hash);
-    if (!valid) {
-      return res.status(401).json({ error: "Username atau password salah." });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Email atau password salah.' });
     }
 
-    const token = signToken({
-      sub: String(user.id),
-      username: user.username,
-      name: user.name,
-      role: user.role,
-      exp: Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS
-    });
+    const isMatch = bcrypt.compareSync(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Email atau password salah.' });
+    }
 
     res.json({
-      token,
       user: {
         id: user.id,
-        username: user.username,
-        name: user.name,
+        name: user.nama,
         role: user.role
       }
     });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Terjadi kesalahan server saat login." });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
-
 app.get("/api/sync", auth, async (req, res) => {
   try {
     const [items, stockIn, stockOut, stats] = await Promise.all([
