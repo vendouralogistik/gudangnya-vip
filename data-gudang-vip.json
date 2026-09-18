@@ -1,55 +1,632 @@
 {
   "admin": {
-    "username": "admin",
-    "password": "admin123",
+    "username": "faizal",
+    "password": "adminlogistik",
     "name": "Administrator Gudang VIP",
     "role": "admin"
   },
-  "items": [
+ "items": [
     {
-      "code": "SP-001",
-      "name": "Oli Mesin 15W-40",
-      "category": "Pelumas",
-      "unit": "Botol",
-      "min_stock": 10,
-      "initial_stock": 25,
-      "location": "Rak A-01"
+      "kode": "vip-001",
+      "nama": "ban luar DT",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "luar gudang",
+      "stokMin": 10,
+      "harga": 0,
+      "stok": 10
     },
     {
-      "code": "SP-002",
-      "name": "Filter Oli",
-      "category": "Filter",
-      "unit": "Pcs",
-      "min_stock": 8,
-      "initial_stock": 20,
-      "location": "Rak A-02"
+      "kode": "vip-002",
+      "nama": "ban dalam DT",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 2",
+      "stokMin": 50,
+      "harga": 0,
+      "stok": 152
     },
     {
-      "code": "SP-003",
-      "name": "Filter Udara",
-      "category": "Filter",
-      "unit": "Pcs",
-      "min_stock": 5,
-      "initial_stock": 12,
-      "location": "Rak A-03"
+      "kode": "dt-001",
+      "nama": "subreker kabin depan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
     },
     {
-      "code": "SP-004",
-      "name": "Busi NGK",
-      "category": "Engine",
-      "unit": "Pcs",
-      "min_stock": 10,
-      "initial_stock": 30,
-      "location": "Rak B-01"
+      "kode": "dt-002",
+      "nama": "subreker kabin belakang",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
     },
     {
-      "code": "SP-005",
-      "name": "V-Belt",
-      "category": "Drive",
-      "unit": "Pcs",
-      "min_stock": 6,
-      "initial_stock": 15,
-      "location": "Rak B-02"
+      "kode": "dt-003",
+      "nama": "subreker chasis",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-004",
+      "nama": "per kampas",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-005",
+      "nama": "kampas rem belakang",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-006",
+      "nama": "kampas rem depan panjang",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-007",
+      "nama": "kampas rem depan pendek",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-008",
+      "nama": "bearing tromol besar",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-009",
+      "nama": "bearing tromol kecil",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-010",
+      "nama": "pompa kabin",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-011",
+      "nama": "palep pto angin",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-012",
+      "nama": "pengait kabin bawah",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-013",
+      "nama": "per kursi",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-014",
+      "nama": "pembunuh otomatis",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-015",
+      "nama": "elbow palep angin",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-016",
+      "nama": "exhouse break",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-017",
+      "nama": "tirot kiri",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-018",
+      "nama": "tirot kanan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-019",
+      "nama": "shill bearing besar",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-020",
+      "nama": "shill bearing kecil",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-021",
+      "nama": "shill as kru besar",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-022",
+      "nama": "shill as kru kecil",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-023",
+      "nama": "karet sambungan knalpot",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-024",
+      "nama": "baut roda belakang",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-025",
+      "nama": "baut roda depan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-026",
+      "nama": "mur roda",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-027",
+      "nama": "filter solar 7331",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-028",
+      "nama": "filter solar 60a",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-029",
+      "nama": "filter solar 17a",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-030",
+      "nama": "pipa ac",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-031",
+      "nama": "paku kampas",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-032",
+      "nama": "mounting segitiga",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-033",
+      "nama": "filter oli dt",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-034",
+      "nama": "lampu depan kiri",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-035",
+      "nama": "lampu depan kanan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-036",
+      "nama": "piston",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-037",
+      "nama": "turbo",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-038",
+      "nama": "sambungan flexibel knalpot",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-039",
+      "nama": "filter udara dt",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-040",
+      "nama": "lampu tembak",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-041",
+      "nama": "lampu belakang dt",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-042",
+      "nama": "tromol depan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 2",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-043",
+      "nama": "tromol belakang",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 2",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-044",
+      "nama": "karet carter oli",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "vip-003",
+      "nama": "lidah ban",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 2",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-045",
+      "nama": "tali persenelan merah",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-046",
+      "nama": "tali persenelan hitam",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-047",
+      "nama": "selang chamber",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-048",
+      "nama": "v-bell mesin dt",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-049",
+      "nama": "metal jalan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-050",
+      "nama": "stand seher",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-051",
+      "nama": "puring/linear",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-052",
+      "nama": "v-bell ac dt lama",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-053",
+      "nama": "v-bell ac dt baru",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-054",
+      "nama": "bak kopling",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-055",
+      "nama": "chamber depan",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-056",
+      "nama": "chamber belakang",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-057",
+      "nama": "dinamo strom",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-058",
+      "nama": "dinamo ac",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
+    },
+    {
+      "kode": "dt-059",
+      "nama": "branstop",
+      "kategori": "Dump Truck",
+      "satuan": "pcs",
+      "lokasi": "gudang 1",
+      "stokMin": 0,
+      "harga": 0,
+      "stok": 0
     }
-  ]
+  ],
+  "stockIn": [],
+  "stockOut": []
 }
